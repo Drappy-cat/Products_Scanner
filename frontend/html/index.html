@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductScan - Scanner Produk Indonesia</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-barcode"></i>
+                    <span>ProductScan</span>
+                </div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#" class="active">MAKANAN</a></li>
+                        <li><a href="#">RESEP</a></li>
+                        <li><a href="#">KOMUNITAS</a></li>
+                        <li><a href="#">MASUK</a></li>
+                        <li><a href="#">DAFTAR</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Database Produk & Scanner Barcode</h1>
+                <p>Temukan informasi nutrisi lengkap dari ribuan produk makanan dan minuman</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <section class="search-section">
+                <div class="search-tabs">
+                    <button class="tab-button active" data-tab="search">
+                        <i class="fas fa-search"></i> Pencarian Manual
+                    </button>
+                    <button class="tab-button" data-tab="scanner">
+                        <i class="fas fa-camera"></i> Scanner Barcode
+                    </button>
+                </div>
+
+                <div class="search-content">
+                    <div id="search-tab" class="tab-content">
+                        <form class="search-form" id="searchForm">
+                            <input 
+                                type="text" 
+                                class="search-input" 
+                                placeholder="Masukkan nama produk atau barcode..."
+                                id="searchInput"
+                            >
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                                Cari
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="scanner-tab" class="tab-content hidden">
+                        <div class="scanner-section">
+                            <div class="camera-container">
+                                <div id="qr-reader"></div>
+                                <div class="scanner-placeholder" id="scanner-placeholder">
+                                    <i class="fas fa-camera"></i>
+                                    <h3>Arahkan kamera ke barcode produk</h3>
+                                    <p>Pastikan barcode terlihat jelas dan tidak terpotong</p>
+                                </div>
+                            </div>
+                            <button class="scan-btn" id="startScanBtn">
+                                <i class="fas fa-play"></i>
+                                Mulai Scan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-section" id="results">
+                    <div class="loading hidden" id="loading">
+                        <div class="spinner"></div>
+                    </div>
+                    <div id="product-results"></div>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <i class="fas fa-barcode"></i>
+                    <h3>Scanner Barcode</h3>
+                    <p>Scan barcode produk dengan mudah menggunakan kamera smartphone atau webcam Anda</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-search"></i>
+                    <h3>Pencarian Cepat</h3>
+                    <p>Cari produk berdasarkan nama, merek, atau kode barcode dengan hasil yang akurat</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Informasi Nutrisi</h3>
+                    <p>Dapatkan informasi nutrisi lengkap termasuk kalori, lemak, protein, dan vitamin</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show corresponding tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+                
+                // Stop scanner if switching away from scanner tab
+                if (tabName !== 'scanner' && window.html5QrCode) {
+                    stopScanner();
+                }
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            
+            if (searchQuery) {
+                await searchProducts(searchQuery);
+            }
+        });
+
+        // Scanner variables
+        let html5QrCode = null;
+        let isScanning = false;
+
+        // Start scanner
+        document.getElementById('startScanBtn').addEventListener('click', () => {
+            if (!isScanning) {
+                startScanner();
+            } else {
+                stopScanner();
+            }
+        });
+
+        async function startScanner() {
+            try {
+                html5QrCode = new Html5Qrcode("qr-reader");
+                document.getElementById('scanner-placeholder').style.display = 'none';
+                document.getElementById('startScanBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Scan';
+                isScanning = true;
+
+                const config = {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                };
+
+                await html5QrCode.start(
+                    { facingMode: "environment" },
+                    config,
+                    onScanSuccess,
+                    onScanFailure
+                );
+            } catch (err) {
+                console.error("Error starting scanner:", err);
+                showError("Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera.");
+                stopScanner();
+            }
+        }
+
+        function stopScanner() {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                    document.getElementById('scanner-placeholder').style.display = 'block';
+                    document.getElementById('startScanBtn').innerHTML = '<i class="fas fa-play"></i> Mulai Scan';
+                    isScanning = false;
+                });
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Barcode scanned: ${decodedText}`);
+            stopScanner();
+            searchProducts(decodedText);
+        }
+
+        function onScanFailure(error) {
+            // Ignore scan failures (too verbose)
+        }
+
+        // Search products function
+        async function searchProducts(query) {
+            showLoading(true);
+            
+            try {
+                // Mock API call - replace with actual API endpoint
+                const response = await mockApiCall(query);
+                displayResults(response.products);
+            } catch (error) {
+                console.error('Search error:', error);
+                showError('Terjadi kesalahan saat mencari produk.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Mock API call (replace with actual API)
+        async function mockApiCall(query) {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Mock data
+            const mockProducts = [
+                {
+                    id: 1,
+                    barcode: '8999999123456',
+                    name: 'Mie Instan Goreng Original',
+                    brand: 'Indomie',
+                    category: 'Makanan',
+                    image: '/api/placeholder/80/80',
+                    calories: 390,
+                    weight: '85g'
+                },
+                {
+                    id: 2,
+                    barcode: '8999999654321',
+                    name: 'Susu UHT Full Cream',
+                    brand: 'Ultra Milk',
+                    category: 'Minuman',
+                    image: '/api/placeholder/80/80',
+                    calories: 150,
+                    weight: '250ml'
+                }
+            ];
+            
+            // Filter products based on query
+            const filteredProducts = mockProducts.filter(product => 
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.brand.toLowerCase().includes(query.toLowerCase()) ||
+                product.barcode.includes(query)
+            );
+            
+            return { products: filteredProducts };
+        }
+
+        function displayResults(products) {
+            const resultsSection = document.getElementById('results');
+            const resultsContainer = document.getElementById('product-results');
+            
+            if (products.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Produk tidak ditemukan</h3>
+                        <p>Coba gunakan kata kunci yang berbeda atau scan barcode produk</p>
+                    </div>
+                `;
+            } else {
+                resultsContainer.innerHTML = products.map(product => `
+                    <div class="product-card" onclick="viewProductDetail(${product.id})">
+                        <div class="product-image">
+                            <i class="fas fa-cube" style="color: #4CAF50; font-size: 2rem;"></i>
+                        </div>
+                        <div class="product-info">
+                            <h4>${product.name}</h4>
+                            <p><strong>${product.brand}</strong> • ${product.category}</p>
+                            <p>${product.calories} kalori • ${product.weight}</p>
+                            <p style="color: #4CAF50; font-size: 0.8rem;">Barcode: ${product.barcode}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            resultsSection.style.display = 'block';
+        }
+
+        function viewProductDetail(productId) {
+            // Redirect to product detail page or show modal
+            alert(`Membuka detail produk ID: ${productId}`);
+            // window.location.href = `/product/${productId}`;
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function showError(message) {
+            alert(message); // Replace with better error handling
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('ProductScan initialized');
+        });
+    </script>
+</body>
+</html>
