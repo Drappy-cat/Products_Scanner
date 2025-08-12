@@ -117,18 +117,15 @@
             button.addEventListener('click', () => {
                 const tabName = button.dataset.tab;
                 
-                // Update active tab button
                 document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                // Show corresponding tab content
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.add('hidden');
                 });
                 document.getElementById(`${tabName}-tab`).classList.remove('hidden');
                 
-                // Stop scanner if switching away from scanner tab
-                if (tabName !== 'scanner' && window.html5QrCode) {
+                if (tabName !== 'scanner' && window.html5QrCode && isScanning) {
                     stopScanner();
                 }
             });
@@ -148,7 +145,7 @@
         let html5QrCode = null;
         let isScanning = false;
 
-        // Start scanner
+        // Start scanner button
         document.getElementById('startScanBtn').addEventListener('click', () => {
             if (!isScanning) {
                 startScanner();
@@ -190,6 +187,8 @@
                     document.getElementById('scanner-placeholder').style.display = 'block';
                     document.getElementById('startScanBtn').innerHTML = '<i class="fas fa-play"></i> Mulai Scan';
                     isScanning = false;
+                }).catch(err => {
+                    console.error("Gagal menghentikan scanner.", err);
                 });
             }
         }
@@ -197,67 +196,46 @@
         function onScanSuccess(decodedText, decodedResult) {
             console.log(`Barcode scanned: ${decodedText}`);
             stopScanner();
+            document.getElementById('searchInput').value = decodedText;
             searchProducts(decodedText);
         }
 
         function onScanFailure(error) {
-            // Ignore scan failures (too verbose)
+            // Ignore scan failures
         }
 
-        // Search products function
+        // =====================================================================
+        // BAGIAN YANG DIUBAH ADA DI SINI
+        // =====================================================================
+
+        // Search products function - SEKARANG MENGGUNAKAN FETCH KE BACKEND
         async function searchProducts(query) {
             showLoading(true);
-            
+            const productResultsContainer = document.getElementById('product-results');
+            productResultsContainer.innerHTML = ''; // Kosongkan hasil sebelumnya
+
             try {
-                // Mock API call - replace with actual API endpoint
-                const response = await mockApiCall(query);
-                displayResults(response.products);
+                // Panggil API backend yang sudah dibuat
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data.products);
+
             } catch (error) {
                 console.error('Search error:', error);
-                showError('Terjadi kesalahan saat mencari produk.');
+                showError('Terjadi kesalahan saat mengambil data dari server.');
             } finally {
                 showLoading(false);
             }
         }
 
-        // Mock API call (replace with actual API)
-        async function mockApiCall(query) {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Mock data
-            const mockProducts = [
-                {
-                    id: 1,
-                    barcode: '8999999123456',
-                    name: 'Mie Instan Goreng Original',
-                    brand: 'Indomie',
-                    category: 'Makanan',
-                    image: '/api/placeholder/80/80',
-                    calories: 390,
-                    weight: '85g'
-                },
-                {
-                    id: 2,
-                    barcode: '8999999654321',
-                    name: 'Susu UHT Full Cream',
-                    brand: 'Ultra Milk',
-                    category: 'Minuman',
-                    image: '/api/placeholder/80/80',
-                    calories: 150,
-                    weight: '250ml'
-                }
-            ];
-            
-            // Filter products based on query
-            const filteredProducts = mockProducts.filter(product => 
-                product.name.toLowerCase().includes(query.toLowerCase()) ||
-                product.brand.toLowerCase().includes(query.toLowerCase()) ||
-                product.barcode.includes(query)
-            );
-            
-            return { products: filteredProducts };
-        }
+        // FUNGSI mockApiCall() TELAH DIHAPUS DARI SINI
+        
+        // =====================================================================
 
         function displayResults(products) {
             const resultsSection = document.getElementById('results');
@@ -266,7 +244,7 @@
             if (products.length === 0) {
                 resultsContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 20px; color: #aaa;"></i>
                         <h3>Produk tidak ditemukan</h3>
                         <p>Coba gunakan kata kunci yang berbeda atau scan barcode produk</p>
                     </div>
@@ -291,27 +269,33 @@
         }
 
         function viewProductDetail(productId) {
-            // Redirect to product detail page or show modal
-            alert(`Membuka detail produk ID: ${productId}`);
-            // window.location.href = `/product/${productId}`;
+            // Nantinya bisa diganti untuk membuka halaman detail atau modal
+            alert(`Membuka detail untuk Produk ID: ${productId}`);
         }
 
         function showLoading(show) {
             const loading = document.getElementById('loading');
+            const resultsContainer = document.getElementById('product-results');
+            const resultsSection = document.getElementById('results');
+
+            resultsSection.style.display = 'block';
             if (show) {
                 loading.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
             } else {
                 loading.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
             }
         }
 
         function showError(message) {
-            alert(message); // Replace with better error handling
+            const resultsContainer = document.getElementById('product-results');
+            resultsContainer.innerHTML = `<div style="text-align: center; padding: 40px; color: #D8000C; background-color: #FFD2D2; border-radius: 8px;">${message}</div>`;
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('ProductScan initialized');
+            console.log('ProductScan initialized and ready.');
         });
     </script>
 </body>
