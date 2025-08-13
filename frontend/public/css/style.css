@@ -1,8 +1,56 @@
-/* General Styling */
+/* =========================
+   THEME TOKENS (CSS VARS)
+   ========================= */
+:root {
+    --bg: #ffffff;
+    --text: #222222;
+    --muted-text: #555555;
+
+    --card: #f8f9fa;
+    --card-border: #e5e7eb;
+    --shadow: rgba(0, 0, 0, 0.08);
+
+    --header-bg: #1a237e;
+    --accent: #0d47a1;
+    --accent-2: #1976d2;
+    --danger: #dc3545;
+
+    --table-row-border: #e5e5e5;
+
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+
+    /* Chart colors */
+    --chart-carb: #42a5f5;
+    --chart-protein: #66bb6a;
+    --chart-fat: #ff7043;
+}
+
+:root[data-theme="dark"] {
+    --bg: #212121;
+    --text: #e0e0e0;
+    --muted-text: #cccccc;
+
+    --card: #333333;
+    --card-border: #000000;
+    --shadow: rgba(0, 0, 0, 0.3);
+
+    --header-bg: #1a237e;
+    --accent: #0d47a1;
+    --accent-2: #1976d2;
+    --danger: #dc3545;
+
+    --table-row-border: #555555;
+
+    --input-bg: #333333;
+    --input-border: #000000;
+}
+
+/* ============ General ============ */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: var(--bg);
+    color: var(--text);
     margin: 0;
 }
 
@@ -14,20 +62,36 @@ body {
 
 /* Header */
 header {
-    background-color: #5f9d3c;
+    background-color: var(--header-bg);
     padding: 10px 0;
     color: white;
+    box-shadow: 0 2px 5px var(--shadow);
 }
 
 header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .logo {
     font-weight: bold;
     font-size: 24px;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+}
+
+.logo-img {
+    height: 40px;
+    margin-right: 10px;
 }
 
 .logo span {
@@ -35,16 +99,65 @@ header .container {
 }
 
 nav a {
-    color: white;
+    color: #ffffff;
     text-decoration: none;
     padding: 10px 15px;
     font-weight: bold;
+    border-radius: 5px;
 }
 
 nav a.active, nav a:hover {
-    background-color: #4b7b2f;
-    border-radius: 5px;
+    background-color: var(--accent);
 }
+
+/* Theme Switch */
+.theme-switch {
+    position: relative;
+    height: 26px;
+}
+.theme-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.switch {
+    width: 48px;
+    height: 26px;
+    background: var(--card-border);
+    border-radius: 999px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 2px 4px var(--shadow) inset;
+}
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: var(--bg);
+    border-radius: 50%;
+    transition: transform .2s ease;
+    box-shadow: 0 1px 2px var(--shadow);
+}
+#theme-toggle:checked + .switch {
+    background: var(--accent-2);
+}
+#theme-toggle:checked + .switch::after {
+    transform: translateX(22px);
+}
+.switch .sun, .switch .moon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    pointer-events: none;
+}
+.switch .sun { left: 7px; }
+.switch .moon { right: 7px; }
 
 /* Main Content */
 main {
@@ -56,65 +169,72 @@ main {
     gap: 20px;
 }
 
-.main-content {
-    flex: 2; /* Takes up 2/3 of the space */
-}
-
-.sidebar {
-    flex: 1; /* Takes up 1/3 of the space */
-}
+.main-content { flex: 2; }
+.sidebar { flex: 1; }
 
 /* Cards */
 .card {
-    background-color: white;
-    border: 1px solid #ddd;
+    background-color: var(--card);
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 8px var(--shadow);
+    border: 2px solid var(--card-border);
 }
 
 .card h3 {
     margin-top: 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid var(--accent);
     padding-bottom: 10px;
-    font-size: 16px;
-    color: #555;
+    font-size: 18px;
+    color: var(--text);
 }
 
 /* Specific Sections */
 #nama-makanan {
     font-size: 28px;
     margin-bottom: 20px;
+    color: var(--text);
 }
 
 .serving-size {
     font-size: 14px;
-    color: #666;
+    color: var(--muted-text);
     margin-bottom: 15px;
 }
 
 .nutrition-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: var(--card);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid var(--card-border);
+}
+
+.nutrition-table th {
+    background-color: var(--accent);
+    text-align: left;
+    padding: 10px 8px;
+    color: #ffffff;
 }
 
 .nutrition-table td {
-    padding: 8px 5px;
-    border-bottom: 1px solid #f2f2f2;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--table-row-border);
+    color: var(--text);
 }
 
-.nutrition-table tr:last-child td {
-    border-bottom: none;
-}
-
+.nutrition-table tr:last-child td { border-bottom: none; }
 .nutrition-table td:last-child {
     text-align: right;
     font-weight: bold;
+    color: var(--danger);
 }
 
 .chart-container {
     position: relative;
-    height: 200px; /* Adjust height as needed */
+    height: 200px;
     width: 200px;
     margin: 10px auto;
 }
@@ -122,13 +242,15 @@ main {
 #rincian-makro {
     text-align: center;
     font-size: 14px;
-    color: #555;
+    color: var(--muted-text);
 }
 
 #foto-makanan {
     width: 100%;
     height: auto;
     border-radius: 5px;
+    box-shadow: 0 2px 4px var(--shadow);
+    border: 2px solid var(--card-border);
 }
 
 .summary-grid {
@@ -141,43 +263,58 @@ main {
 .summary-item .value {
     font-size: 24px;
     font-weight: bold;
-    color: #5f9d3c;
+    color: var(--danger);
 }
 
 .summary-item .label {
     font-size: 14px;
-    color: #666;
+    color: var(--muted-text);
 }
 
 .serving-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    background-color: var(--card);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px var(--shadow);
+    border: 2px solid var(--card-border);
 }
 
 .serving-list li {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #f2f2f2;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--table-row-border);
+    color: var(--text);
 }
-.serving-list li:last-child {
-    border-bottom: none;
-}
+.serving-list li:last-child { border-bottom: none; }
 
 /* Form */
+#log-food-form {
+    background-color: var(--card);
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px var(--shadow);
+    border: 2px solid var(--card-border);
+}
+
 #log-food-form label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
     font-size: 14px;
+    color: var(--text);
 }
 
 #log-food-form input, #log-food-form select {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text);
     border-radius: 3px;
 }
 
@@ -191,8 +328,8 @@ main {
 }
 
 .btn-primary {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--accent-2);
+    color: #ffffff;
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
@@ -202,5 +339,23 @@ main {
     font-size: 16px;
 }
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: var(--accent);
+}
+
+/* Biar tabel rapi */
+.nutrition-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.nutrition-table th,
+.nutrition-table td {
+  padding: 10px 12px;
+}
+
+/* Kolom "Jumlah" mepet kanan */
+.nutrition-table th:last-child,
+.nutrition-table td:last-child {
+  text-align: right;
+  /* opsional: bikin angka sejajar rapi */
+  font-variant-numeric: tabular-nums;
 }

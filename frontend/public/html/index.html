@@ -1,45 +1,70 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informasi Produk</title>
-    
+    <title>Sugar Checker</title>
+
+    <!-- Prevent theme flash: set attribute before CSS loads -->
+    <script>
+    (function () {
+      try {
+        var key = 'sc-theme';
+        var stored = localStorage.getItem(key);
+        var initial = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initial);
+      } catch (e) {}
+    })();
+    </script>
+
     <link rel="stylesheet" href="../css/style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <header>
         <div class="container">
-            <h1 class="logo">Product Scanner <span>INDONESIA</span></h1>
-            <nav>
-                <a href="#" class="active">MAKANAN</a>
-                <a href="#">RESEP</a>
-                <a href="#">KEBUGARAN</a>
-                <a href="#">KOMUNITAS</a>
-            </nav>
+            <h1 class="logo">
+                <img src="../img/logo/sugar-checker-logo.png" alt="Logo SugarChecker" class="logo-img">
+                Sugar<span>Checker</span>
+            </h1>
+
+            <!-- kanan header: nav + theme switch -->
+            <div class="header-right">
+                <nav>
+                    <a href="#" class="active">MAKANAN</a>
+                    <a href="#">RESEP</a>
+                </nav>
+
+                <!-- Theme Switch -->
+                <div class="theme-switch">
+                    <input type="checkbox" id="theme-toggle" aria-label="Ganti tema (Light/Dark)">
+                    <label for="theme-toggle" class="switch">
+                        <span class="sun" aria-hidden="true">☀️</span>
+                        <span class="moon" aria-hidden="true">🌙</span>
+                    </label>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <div class="content-wrapper">
             <div class="main-content">
-                <h2 id="nama-makanan">Memuat...</h2>
+                <h2 id="nama-makanan">Mie</h2>
+
                 <div class="card">
                     <h3>Informasi Produk</h3>
                     <p class="serving-size">Ukuran Porsi: <span id="ukuran-porsi">100 g</span></p>
-                    <table class="nutrition-table">
+                        <table class="nutrition-table">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>Per porsi</th>
+                            <th>Kandungan</th>
+                            <th>Jumlah</th>
                             </tr>
                         </thead>
-                        <tbody id="tabel-gizi">
-                        </tbody>
-                    </table>
+                        <tbody id="tabel-gizi"></tbody>
+                        </table>
                 </div>
 
                 <div class="card">
@@ -48,33 +73,34 @@
                         <canvas id="macro-chart"></canvas>
                     </div>
                     <div id="rincian-makro">
+                        Rincian Kalori: ...
                     </div>
                 </div>
 
                 <div class="card">
                     <h3>Foto</h3>
-                    <img id="foto-makanan" src="" alt="Foto makanan">
+                    <img id="foto-makanan" src="../img/Foto-Produk/Mie-Instan.png" alt="Foto makanan">
                 </div>
             </div>
 
             <aside class="sidebar">
                 <div class="card">
-                    <h3>Ringkasan Gizi:</h3>
+                    <h3>Ringkasan :</h3>
                     <div class="summary-grid">
                         <div class="summary-item">
-                            <div class="value" id="info-kalori">...</div>
+                            <div class="value" id="info-kalori">0</div>
                             <div class="label">Kal</div>
                         </div>
                         <div class="summary-item">
-                            <div class="value" id="info-lemak">...g</div>
+                            <div class="value" id="info-lemak">0g</div>
                             <div class="label">Lemak</div>
                         </div>
                         <div class="summary-item">
-                            <div class="value" id="info-karbo">...g</div>
+                            <div class="value" id="info-karbo">0g</div>
                             <div class="label">Karb</div>
                         </div>
                         <div class="summary-item">
-                            <div class="value" id="info-protein">...g</div>
+                            <div class="value" id="info-protein">0g</div>
                             <div class="label">Prot</div>
                         </div>
                     </div>
@@ -82,33 +108,9 @@
 
                 <div class="card">
                     <h3>Ukuran porsi umum:</h3>
-                    <ul id="porsi-umum" class="serving-list">
-                    </ul>
+                    <ul id="porsi-umum" class="serving-list"></ul>
                 </div>
-                
-                <div class="card">
-                    <h3>Tambahkan item ini</h3>
-                    <form id="log-food-form">
-                        <label for="tanggal">Tanggal:</label>
-                        <input type="date" id="tanggal" name="tanggal">
-                        <label for="makanan">Makan:</label>
-                        <select id="makanan" name="makanan">
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="dinner">Dinner</option>
-                        </select>
-                        <label for="jumlah">Jumlah:</label>
-                        <div class="quantity-input">
-                            <input type="number" id="jumlah" value="100">
-                            <span>gram (g)</span>
-                        </div>
-                        <button type="submit" class="btn-primary">Simpan</button>
-                    </form>
-                </div>
-            </aside>
-        </div>
-    </main>
-    <script src="../js/script.js"></script>
 
+    <script src="../js/script.js"></script>
 </body>
 </html>
