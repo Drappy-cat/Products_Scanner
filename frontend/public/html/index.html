@@ -3,300 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProductScan - Scanner Produk Indonesia</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Informasi Produk</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header class="header">
+
+    <header>
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-barcode"></i>
-                    <span>ProductScan</span>
-                </div>
-                <nav>
-                    <ul class="nav-links">
-                        <li><a href="#" class="active">MAKANAN</a></li>
-                        <li><a href="#">RESEP</a></li>
-                        <li><a href="#">KOMUNITAS</a></li>
-                        <li><a href="#">MASUK</a></li>
-                        <li><a href="#">DAFTAR</a></li>
-                    </ul>
-                </nav>
-            </div>
+            <h1 class="logo">Product Scanner <span>INDONESIA</span></h1>
+            <nav>
+                <a href="#" class="active">MAKANAN</a>
+                <a href="#">RESEP</a>
+                <a href="#">KEBUGARAN</a>
+                <a href="#">KOMUNITAS</a>
+            </nav>
         </div>
     </header>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Database Produk & Scanner Barcode</h1>
-                <p>Temukan informasi nutrisi lengkap dari ribuan produk makanan dan minuman</p>
-            </div>
-        </section>
-
-        <div class="container">
-            <section class="search-section">
-                <div class="search-tabs">
-                    <button class="tab-button active" data-tab="search">
-                        <i class="fas fa-search"></i> Pencarian Manual
-                    </button>
-                    <button class="tab-button" data-tab="scanner">
-                        <i class="fas fa-camera"></i> Scanner Barcode
-                    </button>
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="main-content">
+                <h2 id="nama-makanan">Memuat...</h2>
+                <div class="card">
+                    <h3>Informasi Produk</h3>
+                    <p class="serving-size">Ukuran Porsi: <span id="ukuran-porsi">100 g</span></p>
+                    <table class="nutrition-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Per porsi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-gizi">
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="search-content">
-                    <div id="search-tab" class="tab-content">
-                        <form class="search-form" id="searchForm">
-                            <input 
-                                type="text" 
-                                class="search-input" 
-                                placeholder="Masukkan nama produk atau barcode..."
-                                id="searchInput"
-                            >
-                            <button type="submit" class="search-btn">
-                                <i class="fas fa-search"></i>
-                                Cari
-                            </button>
-                        </form>
+                <div class="card">
+                    <h3 id="persen-akg">...% dari AKG*</h3>
+                    <div class="chart-container">
+                        <canvas id="macro-chart"></canvas>
                     </div>
+                    <div id="rincian-makro">
+                    </div>
+                </div>
 
-                    <div id="scanner-tab" class="tab-content hidden">
-                        <div class="scanner-section">
-                            <div class="camera-container">
-                                <div id="qr-reader"></div>
-                                <div class="scanner-placeholder" id="scanner-placeholder">
-                                    <i class="fas fa-camera"></i>
-                                    <h3>Arahkan kamera ke barcode produk</h3>
-                                    <p>Pastikan barcode terlihat jelas dan tidak terpotong</p>
-                                </div>
-                            </div>
-                            <button class="scan-btn" id="startScanBtn">
-                                <i class="fas fa-play"></i>
-                                Mulai Scan
-                            </button>
+                <div class="card">
+                    <h3>Foto</h3>
+                    <img id="foto-makanan" src="" alt="Foto makanan">
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="card">
+                    <h3>Ringkasan Gizi:</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="value" id="info-kalori">...</div>
+                            <div class="label">Kal</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value" id="info-lemak">...g</div>
+                            <div class="label">Lemak</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value" id="info-karbo">...g</div>
+                            <div class="label">Karb</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value" id="info-protein">...g</div>
+                            <div class="label">Prot</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="results-section" id="results">
-                    <div class="loading hidden" id="loading">
-                        <div class="spinner"></div>
-                    </div>
-                    <div id="product-results"></div>
+                <div class="card">
+                    <h3>Ukuran porsi umum:</h3>
+                    <ul id="porsi-umum" class="serving-list">
+                    </ul>
                 </div>
-            </section>
-
-            <section class="features">
-                <div class="feature-card">
-                    <i class="fas fa-barcode"></i>
-                    <h3>Scanner Barcode</h3>
-                    <p>Scan barcode produk dengan mudah menggunakan kamera smartphone atau webcam Anda</p>
+                
+                <div class="card">
+                    <h3>Tambahkan item ini</h3>
+                    <form id="log-food-form">
+                        <label for="tanggal">Tanggal:</label>
+                        <input type="date" id="tanggal" name="tanggal">
+                        <label for="makanan">Makan:</label>
+                        <select id="makanan" name="makanan">
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                        </select>
+                        <label for="jumlah">Jumlah:</label>
+                        <div class="quantity-input">
+                            <input type="number" id="jumlah" value="100">
+                            <span>gram (g)</span>
+                        </div>
+                        <button type="submit" class="btn-primary">Simpan</button>
+                    </form>
                 </div>
-                <div class="feature-card">
-                    <i class="fas fa-search"></i>
-                    <h3>Pencarian Cepat</h3>
-                    <p>Cari produk berdasarkan nama, merek, atau kode barcode dengan hasil yang akurat</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-chart-pie"></i>
-                    <h3>Informasi Nutrisi</h3>
-                    <p>Dapatkan informasi nutrisi lengkap termasuk kalori, lemak, protein, dan vitamin</p>
-                </div>
-            </section>
+            </aside>
         </div>
     </main>
+    <script src="../js/script.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    
-    <script>
-        // Tab switching functionality
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const tabName = button.dataset.tab;
-                
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.add('hidden');
-                });
-                document.getElementById(`${tabName}-tab`).classList.remove('hidden');
-                
-                if (tabName !== 'scanner' && window.html5QrCode && isScanning) {
-                    stopScanner();
-                }
-            });
-        });
-
-        // Search functionality
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const searchQuery = document.getElementById('searchInput').value.trim();
-            
-            if (searchQuery) {
-                await searchProducts(searchQuery);
-            }
-        });
-
-        // Scanner variables
-        let html5QrCode = null;
-        let isScanning = false;
-
-        // Start scanner button
-        document.getElementById('startScanBtn').addEventListener('click', () => {
-            if (!isScanning) {
-                startScanner();
-            } else {
-                stopScanner();
-            }
-        });
-
-        async function startScanner() {
-            try {
-                html5QrCode = new Html5Qrcode("qr-reader");
-                document.getElementById('scanner-placeholder').style.display = 'none';
-                document.getElementById('startScanBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Scan';
-                isScanning = true;
-
-                const config = {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
-                };
-
-                await html5QrCode.start(
-                    { facingMode: "environment" },
-                    config,
-                    onScanSuccess,
-                    onScanFailure
-                );
-            } catch (err) {
-                console.error("Error starting scanner:", err);
-                showError("Gagal mengakses kamera. Pastikan Anda memberikan izin akses kamera.");
-                stopScanner();
-            }
-        }
-
-        function stopScanner() {
-            if (html5QrCode && isScanning) {
-                html5QrCode.stop().then(() => {
-                    html5QrCode.clear();
-                    document.getElementById('scanner-placeholder').style.display = 'block';
-                    document.getElementById('startScanBtn').innerHTML = '<i class="fas fa-play"></i> Mulai Scan';
-                    isScanning = false;
-                }).catch(err => {
-                    console.error("Gagal menghentikan scanner.", err);
-                });
-            }
-        }
-
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log(`Barcode scanned: ${decodedText}`);
-            stopScanner();
-            document.getElementById('searchInput').value = decodedText;
-            searchProducts(decodedText);
-        }
-
-        function onScanFailure(error) {
-            // Ignore scan failures
-        }
-
-        // =====================================================================
-        // BAGIAN YANG DIUBAH ADA DI SINI
-        // =====================================================================
-
-        // Search products function - SEKARANG MENGGUNAKAN FETCH KE BACKEND
-        async function searchProducts(query) {
-            showLoading(true);
-            const productResultsContainer = document.getElementById('product-results');
-            productResultsContainer.innerHTML = ''; // Kosongkan hasil sebelumnya
-
-            try {
-                // Panggil API backend yang sudah dibuat
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                displayResults(data.products);
-
-            } catch (error) {
-                console.error('Search error:', error);
-                showError('Terjadi kesalahan saat mengambil data dari server.');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // FUNGSI mockApiCall() TELAH DIHAPUS DARI SINI
-        
-        // =====================================================================
-
-        function displayResults(products) {
-            const resultsSection = document.getElementById('results');
-            const resultsContainer = document.getElementById('product-results');
-            
-            if (products.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 20px; color: #aaa;"></i>
-                        <h3>Produk tidak ditemukan</h3>
-                        <p>Coba gunakan kata kunci yang berbeda atau scan barcode produk</p>
-                    </div>
-                `;
-            } else {
-                resultsContainer.innerHTML = products.map(product => `
-                    <div class="product-card" onclick="viewProductDetail(${product.id})">
-                        <div class="product-image">
-                            <i class="fas fa-cube" style="color: #4CAF50; font-size: 2rem;"></i>
-                        </div>
-                        <div class="product-info">
-                            <h4>${product.name}</h4>
-                            <p><strong>${product.brand}</strong> • ${product.category}</p>
-                            <p>${product.calories} kalori • ${product.weight}</p>
-                            <p style="color: #4CAF50; font-size: 0.8rem;">Barcode: ${product.barcode}</p>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            resultsSection.style.display = 'block';
-        }
-
-        function viewProductDetail(productId) {
-            // Nantinya bisa diganti untuk membuka halaman detail atau modal
-            alert(`Membuka detail untuk Produk ID: ${productId}`);
-        }
-
-        function showLoading(show) {
-            const loading = document.getElementById('loading');
-            const resultsContainer = document.getElementById('product-results');
-            const resultsSection = document.getElementById('results');
-
-            resultsSection.style.display = 'block';
-            if (show) {
-                loading.classList.remove('hidden');
-                resultsContainer.classList.add('hidden');
-            } else {
-                loading.classList.add('hidden');
-                resultsContainer.classList.remove('hidden');
-            }
-        }
-
-        function showError(message) {
-            const resultsContainer = document.getElementById('product-results');
-            resultsContainer.innerHTML = `<div style="text-align: center; padding: 40px; color: #D8000C; background-color: #FFD2D2; border-radius: 8px;">${message}</div>`;
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('ProductScan initialized and ready.');
-        });
-    </script>
 </body>
 </html>
