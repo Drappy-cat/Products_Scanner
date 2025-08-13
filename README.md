@@ -1,4 +1,5 @@
 "Sugar Checker"
+--
 Aplikasi ini adalah sebuah platform web yang berfungsi untuk mengecek kandungan gizi pada produk makanan dan minuman kemasan. Proyek ini dikembangkan dengan tujuan memberikan informasi nutrisi yang cepat dan mudah diakses oleh pengguna, sehingga mereka dapat membuat pilihan yang lebih sehat.
 --
 🛠️ Teknologi yang Digunakan
