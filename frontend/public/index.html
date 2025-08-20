@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sugar Checker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sugar Checker</title>
 
-    <!-- Prevent theme flash: set attribute before CSS loads -->
-    <script>
+  <!-- Set tema lebih dulu biar nggak nge-flash -->
+  <script>
     (function () {
       try {
         var key = 'sc-theme';
@@ -15,102 +15,154 @@
         document.documentElement.setAttribute('data-theme', initial);
       } catch (e) {}
     })();
-    </script>
+  </script>
 
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- CSS lokal -->
+  <link id="css-main" rel="stylesheet" href="./css/style.css?v=1">
+  <!-- Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <h1 class="logo">
-                <img src="img/logo/sugar-checker-logo.png" alt="Logo SugarChecker" class="logo-img">
-                Sugar<span>Checker</span>
-            </h1>
+  <header>
+    <div class="container">
+      <h1 class="logo" id="go-home" style="cursor:pointer">
+        <img src="./img/logo/sugar-checker-logo.png" alt="Logo SugarChecker" class="logo-img">
+        Sugar<span>Checker</span>
+      </h1>
 
-            <!-- kanan header: nav + theme switch -->
-            <div class="header-right">
-                <nav>
-                    <a href="#" class="active">MAKANAN</a>
-                    <a href="#">RESEP</a>
-                </nav>
-
-                <!-- Theme Switch -->
-                <div class="theme-switch">
-                    <input type="checkbox" id="theme-toggle" aria-label="Ganti tema (Light/Dark)">
-                    <label for="theme-toggle" class="switch">
-                        <span class="sun" aria-hidden="true">☀️</span>
-                        <span class="moon" aria-hidden="true">🌙</span>
-                    </label>
-                </div>
-            </div>
+      <div class="header-right">
+        <div class="theme-switch">
+          <input type="checkbox" id="theme-toggle" aria-label="Ganti tema (Light/Dark)">
+          <label for="theme-toggle" class="switch">
+            <span class="sun" aria-hidden="true">☀️</span>
+            <span class="moon" aria-hidden="true">🌙</span>
+          </label>
         </div>
-    </header>
+      </div>
+    </div>
+  </header>
 
-    <main class="container">
-        <div class="content-wrapper">
-            <div class="main-content">
-                <h2 id="nama-makanan">Mie</h2>
+  <main class="container">
+    <!-- LANDING -->
+    <section id="landing" aria-label="Halaman awal">
+      <div class="hero">
+        <h2 class="hero-title">Cek Kandungan </h2>
+        <p class="hero-subtitle">Cari nama produk, nomor barcode (EAN-13).</p>
 
-                <div class="card">
-                    <h3>Informasi Produk</h3>
-                    <p class="serving-size">Ukuran Porsi: <span id="ukuran-porsi">100 g</span></p>
-                        <table class="nutrition-table">
-                        <thead>
-                            <tr>
-                            <th>Kandungan</th>
-                            <th>Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabel-gizi"></tbody>
-                        </table>
-                </div>
+        <form id="search-form" class="search-bar" autocomplete="off">
+          <input id="search-input" type="search" placeholder="Contoh: Mie Instan, 8991234567890, E621..." aria-label="Cari produk atau E-code">
+          <button type="submit" class="btn-primary">Cari</button>
+          <button type="button" id="open-scanner" class="btn-outline">Scan Barcode</button>
+        </form>
 
-                <div class="card">
-                    <h3 id="persen-akg">...% dari AKG*</h3>
-                    <div class="chart-container">
-                        <canvas id="macro-chart"></canvas>
-                    </div>
-                    <div id="rincian-makro">
-                        Rincian Kalori: ...
-                    </div>
-                </div>
+        <div class="quick-tags" aria-label="Kategori populer">
+          <button class="tag" data-q="Minuman">Minuman</button>
+          <button class="tag" data-q="Cokelat">Makanan</button>
+          <button class="tag" data-q="E621">E621</button>
+          <button class="tag" data-q="E110">E110</button>
+        </div>
+      </div>
 
-                <div class="card">
-                    <h3>Foto</h3>
-                    <img id="foto-makanan" src="img/Foto-Produk/Mie-Instan.png" alt="Foto makanan">
-                </div>
+      <div id="search-results" class="results" aria-live="polite"></div>
+    </section>
+
+    <!-- ============== UNDERSTANDING SugarChecker (full-bleed) ============== -->
+    <section id="ecodes-info" class="band full-bleed" aria-label="Understanding E-Codes">
+    <div class="container band-inner">
+        <h2 class="band-title">SugarChecker</h2>
+         <span class="brand-tagline">Cek kandungan gula, lemak, dan kalori makananmu!</span>
+        <span class="brand-tagline">SugarChecker membantu kamu membaca label lebih cerdas—scan barcode, cek E-code, dan pahami kandungan produk makanan atau Minuman dalam sekali klik.</span>
+        <p class="band-subtitle">
+        
+        </p>
+    </section>
+
+    <!-- ============== BRAND STRIP / FOOTER-LIKE ============== -->
+    <section class="brand-strip full-bleed" aria-label="Brand strip">
+    <div class="container brand-wrap">
+        <div class="brand-left">
+        <span class="brand-name">SugarChecker</span>
+        </div>
+        <div class="brand-copy">© 2025 SugarChecker. All rights reserved.</div>
+    </div>
+    </section>
+
+    <!-- DETAIL -->
+    <section id="detail" aria-label="Detail produk" hidden>
+      <div class="content-wrapper">
+        <div class="main-content">
+          <button class="link-back" id="back-to-home">← Kembali</button>
+          <h2 id="nama-makanan">Mie</h2>
+
+          <div class="card">
+            <h3>Informasi Produk</h3>
+            <p class="serving-size">Ukuran Porsi: <span id="ukuran-porsi">100 g</span></p>
+            <table class="nutrition-table">
+              <thead>
+                <tr><th>Kandungan</th><th>Jumlah</th></tr>
+              </thead>
+              <tbody id="tabel-gizi"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3 id="persen-akg">...% dari AKG*</h3>
+            <div class="chart-container"><canvas id="macro-chart"></canvas></div>
+            <div id="rincian-makro">Rincian Kalori: ...</div>
+          </div>
+
+          <div class="card">
+            <h3>Foto</h3>
+            <img id="foto-makanan" src="./img/Foto-Produk/Mie-Instan.png" alt="Foto makanan">
+          </div>
+        </div>
+
+        <aside class="sidebar">
+          <div class="card">
+            <h3>Ringkasan :</h3>
+            <div class="summary-grid">
+              <div class="summary-item"><div class="value" id="info-kalori">0</div><div class="label">Kal</div></div>
+              <div class="summary-item"><div class="value" id="info-lemak">0g</div><div class="label">Lemak</div></div>
+              <div class="summary-item"><div class="value" id="info-karbo">0g</div><div class="label">Karb</div></div>
+              <div class="summary-item"><div class="value" id="info-protein">0g</div><div class="label">Prot</div></div>
             </div>
+          </div>
 
-            <aside class="sidebar">
-                <div class="card">
-                    <h3>Ringkasan :</h3>
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <div class="value" id="info-kalori">0</div>
-                            <div class="label">Kal</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="value" id="info-lemak">0g</div>
-                            <div class="label">Lemak</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="value" id="info-karbo">0g</div>
-                            <div class="label">Karb</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="value" id="info-protein">0g</div>
-                            <div class="label">Prot</div>
-                        </div>
-                    </div>
-                </div>
+          <div class="card">
+            <h3>Ukuran porsi umum:</h3>
+            <ul id="porsi-umum" class="serving-list"></ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
 
-                <div class="card">
-                    <h3>Ukuran porsi umum:</h3>
-                    <ul id="porsi-umum" class="serving-list"></ul>
-                </div>
+  <!-- SCANNER MODAL -->
+  <div class="modal" id="scanner-modal" aria-hidden="true" role="dialog" aria-labelledby="scanner-title" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-body">
+      <div class="camera-controls" style="display:flex; gap:8px; margin-bottom:10px">
+        <select id="camera-select" aria-label="Pilih kamera"></select>
+        <button type="button" id="switch-camera" class="btn-outline">Switch</button>
+        <label class="btn-outline" style="display:inline-block; padding:6px 10px; cursor:pointer;">
+          Scan dari Foto
+      <input id="barcode-file" type="file" accept="image/*" style="display:none">
+    </label>
+  </div>
 
-    <script src="js/script.js"></script>
+      <div class="modal-header">
+        <h3 id="scanner-title">Pindai Barcode Produk</h3>
+        <button class="modal-close" data-close aria-label="Tutup">✕</button>
+      </div>
+      <div id="qr-reader" style="width:100%"></div>
+      <p class="modal-hint">Scanner butuh HTTPS atau http://localhost. Arahkan kamera ke barcode EAN-13.</p>
+    </div>
+  </div>
+
+  <!-- JS lokal -->
+  <script src="./js/script.js" defer></script>
 </body>
 </html>
+ 
